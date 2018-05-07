@@ -2,9 +2,8 @@ from numpy import *
 from math import log
 import operator
 import pickle
+from varibles import *
 #import decisionTreePlot as dtPlot
-
-inputPath='D:/python/MachineLearningFromApache-master/input/'
 
 def createDataSet():
     dataSet = [[1, 1, 'yes'],

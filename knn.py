@@ -1,8 +1,7 @@
 from numpy import *
 import operator
+from varibles import *
 
-#inputPath='E:/python excise/MachineLearningFromApache/input/'
-inputPath='D:/python/MachineLearningFromApache-master/input/'
 def createDataSet():
     group = array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
     labels = ['A', 'A', 'B', 'B']
