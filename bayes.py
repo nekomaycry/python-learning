@@ -2,7 +2,6 @@ from numpy import *
 from varibles import *
 
 def load_data_set():
-
     posting_list = [
         ['my', 'dog', 'has', 'flea', 'problems', 'help', 'please'],
         ['maybe', 'not', 'take', 'him', 'to', 'dog', 'park', 'stupid'],
@@ -47,12 +46,13 @@ def trainNB(trainMatrix,trainCatelog):
     for i in range(m):
         if trainCatelog[i]==1:
             p1num+=trainMatrix[i]
-            p1Denom+=sum(trainMatrix[i])
+            p1Denom+=sum(trainMatrix[i])#sum([1,2,3])-->6
         else:
             p0num+=trainMatrix[i]
             p0Denom+=sum(trainMatrix[i])
+    
     p1vect=log(p1num/p1Denom)#the log of numpy
-    p0vect=log(p0num/p0Denom)
+    p0vect=log(p0num/p0Denom)#the possibility
     return p1vect,p0vect,pAbuse
 
 def classify(testvec,p1vect,p0vect,pAbuse):
@@ -113,6 +113,20 @@ def spamTest():
         errorcount+=re!=classlist[testIndex]
     print('the error rate is {:.2%}'.format((errorcount/len(doclist))))
     
+#--------rss---------
+def calc_most_freq(vocab_list, full_text):
+    from operator import itemgetter
+    freqDict={}
+    for tok in vocab_list:
+        freqDict[tok]=full_text.count(tok)
+    sortedFreq=sorted(freqDict.items(),key=itemgetter(1),reverse=True)
+    return sortedFreq[0:30]
+
+
+
+
+
 if __name__=='__main__':
-    #testing_naive_bayes()
-    spamTest()
+    import feedparser
+    testing_naive_bayes()
+    #spamTest()
