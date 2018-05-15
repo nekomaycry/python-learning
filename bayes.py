@@ -122,11 +122,57 @@ def calc_most_freq(vocab_list, full_text):
     sortedFreq=sorted(freqDict.items(),key=itemgetter(1),reverse=True)
     return sortedFreq[0:30]
 
+def local_words(feed0,feed1):
+    import feedparser
+    doc_list=[];class_list=[];full_text=[]
+    minlen=min(len(feed0['entries']),len(feed1['entries']))
+    for i in minlen:
+        word_list=textParse(feed0['entries'][i]['summary']);
+        doc_list.append(word_list)
+        full_text.extend(word_list)
+        class_list.append(0)
+        word_list=textParse(feed1['entries'][i]['summary']);
+        doc_list.append(word_list)
+        full_text.extend(word_list)
+        class_list.append(1)        
+    vocab_list=create_vocab_list(doc_list)
+    top30words=calc_most_freq(vocab_list,full_text)
+    for pairW in top30words:
+        if pairW[0] in vocab_list : vocab_list.remove(pairW[0])
+    training_set=range(2*minlen);test_set=[]
+    for i in range(20):
+        rand_index=int(random.uniform(0,len(training_set)))#uniform get random number in range of arg0 to arg1
+        test_set.append(rand_index)
+        del(raining_set[rand_index])#delelet element from list using del
+    train_mat=[];train_class=[]
+    for doc_index in training_set:
+        train_mat.append(bagOfwords2vec(vocab_list, doc_list[doc_index]))
+        train_class.append(class_list[doc_list])
+    p1vect,p0vect,pAbuse=trainNB(array(train_mat), array(train_class))
+    err_count=0;
+    for test_index in test_set:
+        result=classify(bagOfwords2vec(array(vocab_list), doc_list[test_index]), p1vect, p0vect, pAbuse)
+        if result!=class_list[test_index]:
+            err_count+=1
+    print('the error rate is {:.2%}'.format(float(err_count)/len(test_set)))
+    return vocab_list,p0vect,p1vect
 
-
-
+def get_top_word(ny,sf):
+    import operator
+    vocab_list,p0vect,p1vect=local_words(ny,sf)
+    topNY=[];topSF=[]
+    for i in range(len(p0vect)):
+        if p0vect[i]>-6.0:topSF.append((vocab_list[i],p0vect[i]))
+        if p1vect[i]>-6.0:topNY.append((vocab_list[i],p1vect[i]))
+    sortedSF=sorted(topSF,key=lambda pair:pair[1],reverse=True);
+    print('*SF*'*6)
+    for item in sortedSF:
+        print(item[0])
+    sortedNY=sorted(topNY,key=lambda pair:pair[1],reverse=True);
+    print('*NY*'*6)
+    for item in sortedNY:
+        print(item[0])    
 
 if __name__=='__main__':
-    import feedparser
-    testing_naive_bayes()
+    #testing_naive_bayes()
     #spamTest()
